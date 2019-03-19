@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件在线预览</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="/js/jquery.media.js"></script>
+</head>
+<body>
+    <div><a href="/file/打印社保参保证明.pdf">a标签方式预览pdf，需要打开新页面</a></div>
+    <div id="handout_wrap_inner"></div>
+    <div><a href="#" onclick="jquerymedia('/file/打印社保参保证明.pdf')">jquery.media方式预览pdf</a></div>
+    <div><a href="#" onclick="jquerymedia('/file/a0d2fb29ca71c8df673d6f44ef5b1f34.jpg')">jquery.media方式预览图片</a></div>
+    <div id="wrview"></div>
+    <div><a href="#" onclick="wrview()">微软预览，文件必须为可用的公网地址</a></div>
+    <div><a href="http://www.xdocin.com/xdoc?_func=to&amp;_format=html&amp;_cache=1&amp;_xdoc=http://www.xdocin.com/demo/demo.docx" target="_blank" rel="nofollow">XDOC</a></div>
+    <form id="openFile">
+        <input type="file" name="file" id="fileid">
+        <input id="upload" type="button" value="上传">
+        <input type="button" value="预览" id="viewWord">
+    </form>
+</body>
+<script>
+    $(function(){
+        var filePath = ''
+        $('#viewWord').click(function(){
+            if(!filePath){
+                alert("请上传文件");
+                return false;
+            }
+            window.location.href = '/viewWord?filePath=' + encodeURIComponent(filePath);
+        });
+        $("#upload").click(function () {
+            if(!$('#fileid').val()){
+                alert("请选择文件");
+                return false;
+            }
+            var formData = new FormData($('#openFile')[0]);
+            $.ajax({
+                type: 'post',
+                url: "/upload",
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(data){
+                    alert("上传成功！")
+                    filePath = data;
+                },
+                error: function(){
+                    alert("上传失败");
+                }
+            });
+        });
+    })
+
+    function jquerymedia(url){
+        $('#handout_wrap_inner').media({
+            width: '100%',
+            height: '500px',
+            autoplay: true,
+            src:url
+        });
+    }
+    function wrview() {
+        $('#wrview').append($("<iframe src='https://view.officeapps.live.com/op/view.aspx?src=http://storage.xuetangx.com/public_assets/xuetangx/PDF/1.xls' width='100%' height='500px' frameborder='1'>\n" +
+            "    </iframe>"));
+    }
+</script>
+</html>
